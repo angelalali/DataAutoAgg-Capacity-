@@ -30,8 +30,8 @@ def qpv_data ():
         , FabricatedFlag
         , coalesce(PurchasedFlag, SubContractFlag) NonFabricated
         --, TagID
-        , TagName
-        , v.Variant
+        --, TagName
+        --, v.Variant
 
         from ( -- eve; everything
 
@@ -69,8 +69,8 @@ def qpv_data ():
             , rpn.SubContractFlag
             , bmd.Buyer
             , bmd.Manager
-            , rpn.TagID
-            , rpn.TagName
+            --, rpn.TagID
+            --, rpn.TagName
 
             --select *
             ------------------- use following to reduce the size of your table ---------------
@@ -96,8 +96,8 @@ def qpv_data ():
                 , p.SubContractFlag
                 , s2.SupplierCode as PreferredSupplierCode
                 , s2.Name as PreferredSupplierName
-                , t.TagID
-                , t.TagName
+                --, t.TagID
+                --, t.TagName
 
                 from bom.SalesBOMSampleExplosion be
                 left join inv.Part p
@@ -115,8 +115,8 @@ def qpv_data ():
                 -- find tag (to be used with cpv info)
                 left join inv.PartTag pt
                 on pt.PartID = p.PartID
-                left join inv.Tag t
-                on pt.TagID = t.TagID
+                --left join inv.Tag t
+                --on pt.TagID = t.TagID
 
                 where
                 --SalesBOMSampleID in (149, 150) and
@@ -372,13 +372,7 @@ def qpv_data ():
             left join [sjc04-woppprd1].[supplychain_sustainability].pur.BuyerManagerDirector as bmd on rpn.BuyerCode=bmd.BuyerCode
         ) eve
 
-        left join (
-            select p.PartNumber,u.DisplayName as SCPM, Variant
-            from inv.Part p
-            join inv.PartProgramManagement ppm on ppm.PartID = p.PartID
-            join sec.[User] u on u.UserID = ppm.SCProgramManagerUserID
-        ) v
-        on eve.DetailPartNumber = v.PartNumber
+
     """
 
     ### pandas has a really convenient in house fxn that will just read the sql results into a dtaframe for you! :D
